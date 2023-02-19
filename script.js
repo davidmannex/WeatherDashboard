@@ -2,14 +2,14 @@ var apiKey = "5a400b44d45e02507df0966926e7b809";
 
 var today=moment().format('l');
 
-if (localStorage.getItem("searches")==null){
-    var searches=[]
+if (localStorage.getItem("searches1")==null||localStorage.getItem("searches1")==""){
+    var searches1=[]
 }
 else{
-    var searches=localStorage.getItem("searches");
-    searches=JSON.parse(searches);
-    for(x=0;x<searches.length;x++){
-        generateButton(searches[x]);
+    var searches1=localStorage.getItem("searches1");
+    searches1=JSON.parse(searches1);
+    for(x=0;x<searches1.length;x++){
+        generateButton(searches1[x]);
     }
 }
 
@@ -41,19 +41,12 @@ function getLocation(location){
         var wind = response.wind.speed;
         var humidity= response.main.humidity;
         var icon= response.weather[0].icon;
-        console.log(response.weather[0]);
-        console.log(response.weather[0].icon);
-        //$(".subtitle").append(today);
-        //$(".todayTemp").append("Temperature : "+ temp);
-        //$(".todayWind").append("Wind Speed : "+ wind);
-        //$(".todayHumidity").append("Humidity : "+ humidity);
         var todayCard=buildCard(today,temp,wind,humidity,icon);
         $('#WeatherCard').append(todayCard);
         let fivedayforcastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lattitude}&lon=${longitude}&units=imperial&appid=${apiKey}`;
         $.get(fivedayforcastURL).then(function (response) {
-        console.log(response);
-        console.log(response.list)
-        for(var x=7; x<=response.length;x=x+8){//this is due to the times between each measurement being 3 hours so we have to skip 8 entires or skip 24 hours
+        for(var x=7; x<=response.list.length;x=x+8){//this is due to the times between each measurement being 3 hours so we have to skip 8 entires or skip 24 hours
+            
             var daysPassed=(x+1)/8;
             var curtime=response.list[x].dt
             var entry=response.list[x]
@@ -75,10 +68,10 @@ function getLocation(location){
 $(".submit").on("click",function () {
     var inputedCity=$(this).siblings(".curCity").val();
     getLocation(inputedCity);
-    if(searches.indexOf(inputedCity)==-1)
+    if(searches1.indexOf(inputedCity)==-1)
     {
-        searches.push(inputedCity);
-        localStorage.setItem("searches",JSON.stringify(searches));
+        searches1.push(inputedCity);
+        localStorage.setItem("searches1",JSON.stringify(searches1));
     }
     generateButton(inputedCity);
 
